@@ -88,3 +88,6 @@ object2Instance.virtualMethod();
 ## 2.1.0 
 
 - Improved speed tremendously. Kept older assign as assignSlow for creating classes that don't get created often.
+- Added debugging capabilities. 
+   - If you add a displayName to your Obj we will make sure it appears in the Stack Trace.
+   - Make sure displayName is a function name. Also consider compiling out displayName with Babel. 
