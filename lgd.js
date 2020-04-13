@@ -23,6 +23,19 @@ const Oloo = {
     const newObj = Object.create(obj);
     const oldProto = Object.getPrototypeOf(baseObj);
     const newProto = Object.getPrototypeOf(newObj);
+
+    if(process.env.NODE_ENV !== 'production') {
+      if(obj.constructor === Object.prototype.constructor && obj.displayName) {
+        var fnNameRegex = /^[$A-Z_][0-9A-Z_$]*$/i;
+        if(fnNameRegex.test(obj.displayName)) {
+          console.warn('\x1b[33mOLOO: displayName must be a valid function name.\x1b[0m')
+        }
+        else {
+          eval(`Object.defineProperty(obj, 'constructor', { value: (function ${obj.displayName}() {}).bind(null), writable: false, enumerable: false, configurable: false });`);
+        }
+      }
+    }
+
     Object.setPrototypeOf(newProto, oldProto);
     Object.setPrototypeOf(baseObj, newProto);
     return baseObj;
@@ -46,25 +59,35 @@ const Oloo = {
     return baseObj;
   },
 
-  assignSlow(baseObj, obj) {
-    let createdPrototype = false;
-  
+  assignSlow(baseObj, obj) {  
+    const oldProto = Object.getPrototypeOf(baseObj);
+    const newProto = Object.create(oldProto);
+
     let descriptors = Object.keys(obj)
       .reduce((descriptors, key) => {
         const descriptor = Object.getOwnPropertyDescriptor(obj, key);
 
-        if(typeof descriptor.get === 'undefined' && typeof obj[key] === 'function') {
-          if(!createdPrototype) {
-            createdPrototype = true;
-            Object.setPrototypeOf(baseObj, Object.create(baseObj.__proto__));
-          }
-          baseObj.__proto__[key] = obj[key];
+        if(typeof descriptor.get === 'undefined' && typeof descriptor.set === 'undefined') {
+          newProto[key] = obj[key];
           return descriptors;
         }
 
         descriptors[key] = descriptor;
         return descriptors;
       }, {});
+    Object.setPrototypeOf(baseObj, newProto);
+      
+    if(process.env.NODE_ENV !== 'production') {
+      if(obj.constructor === Object.prototype.constructor && obj.displayName) {
+        var fnNameRegex = /^[$A-Z_][0-9A-Z_$]*$/i;
+        if(fnNameRegex.test(obj.displayName)) {
+          console.warn('\x1b[33mOLOO: displayName must be a valid function name.\x1b[0m')
+        }
+        else {
+          eval(`Object.defineProperty(obj, 'constructor', { value: (function ${obj.displayName}() {}).bind(null), writable: false, enumerable: false, configurable: false });`);
+        }
+      }
+    }
 
     Object.defineProperties(baseObj, descriptors);
     
@@ -112,15 +135,16 @@ const Oloo = {
     }
 
     if(!parent.hasOwnProperty(funcName)) {
-      Oloo._base(obj, parent, funcName, ...params);
-      return;
+      return Oloo._base(obj, parent, funcName, ...params);
     }
 
-    parent[funcName].bind(currentObjectInstance.obj)(...params);
+    const ret = parent[funcName].bind(currentObjectInstance.obj)(...params);
 
     if(currentObjectInstance.obj) {
       Oloo.objectMap.delete(currentObjectInstance.obj);
     }
+
+    return ret;
   },
   
   _base(objInstance, obj, funcName, ...params) {
@@ -144,11 +168,13 @@ const Oloo = {
     // Keeps track of last base class to call function.
     currentObjectInstance[funcName] = parent;
 
-    parent[funcName].bind(currentObjectInstance.obj)(...params);
+    const ret = parent[funcName].bind(currentObjectInstance.obj)(...params);
 
     if(currentObjectInstance.obj) {
       Oloo.objectMap.delete(currentObjectInstance.obj);
     }
+
+    return ret;
   }
 }
 
@@ -158,7 +184,7 @@ const Oloo = {
 */
 const LGD = {
   /**
-  * @description Setup Oloo as a global varaible so you don't have to import it in every class.
+  * @description Setup Oloo as a global variable so you don't have to import it in every class.
   */
   setup() {
     if(typeof window !== 'undefined') {

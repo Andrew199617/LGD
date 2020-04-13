@@ -1,5 +1,5 @@
 {
-  "name": "@learngamedevelopment/oloo",
+  "name": "@mavega/oloo",
   "version": "2.1.3",
   "description": "Polyfill to allow you to use OLOO pattern properly in project. Check out VSC extensions by LearnGameDevelopment to have syntax highlighting for these polyfills.",
   "main": "lgd.js",
