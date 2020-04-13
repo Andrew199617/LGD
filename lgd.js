@@ -105,11 +105,15 @@ const Oloo = {
       obj = currentObjectInstance[funcName] || obj;
     }
 
-    parent = Object.getPrototypeOf(obj);
-
     while(!parent.hasOwnProperty(funcName)) {
       // Start with the first base object that has the function. This will also ignore the first base objects func if we are calling the method without base since that will be the function we are calling this from.
       parent = Object.getPrototypeOf(parent);
+
+      if(process.env.NODE_ENV !== 'production') {
+        if(!parent) {
+          throw new Error(`No base function ${funcName} was found.`);
+        }
+      }
     }
 
     if(!obj.hasOwnProperty("__parent__")) {
