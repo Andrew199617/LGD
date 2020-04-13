@@ -95,7 +95,7 @@ const Oloo = {
   },
 
   base(obj, funcName, ...params) {
-    funcName = typeof funcName === 'function' ? funcName.name : funcName;
+    funcName = typeof funcName === 'function' ? funcName.name.replace(/(bound|\s)/g,'') : funcName;
     
     let parent = obj;
 
