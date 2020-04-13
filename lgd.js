@@ -26,8 +26,8 @@ const Oloo = {
 
     if(process.env.NODE_ENV !== 'production') {
       if(obj.constructor === Object.prototype.constructor && obj.displayName) {
-        var fnNameRegex = /^[$A-Z_][0-9A-Z_$]*$/i;
-        if(fnNameRegex.test(obj.displayName)) {
+        var fnNameRegex = /^[A-Z_][0-9A-Z_]*$/i;
+        if(!fnNameRegex.test(obj.displayName)) {
           console.warn('\x1b[33mOLOO: displayName must be a valid function name.\x1b[0m')
         }
         else {
@@ -79,8 +79,8 @@ const Oloo = {
       
     if(process.env.NODE_ENV !== 'production') {
       if(obj.constructor === Object.prototype.constructor && obj.displayName) {
-        var fnNameRegex = /^[$A-Z_][0-9A-Z_$]*$/i;
-        if(fnNameRegex.test(obj.displayName)) {
+        var fnNameRegex = /^[A-Z_][0-9A-Z_]*$/i;
+        if(!fnNameRegex.test(obj.displayName)) {
           console.warn('\x1b[33mOLOO: displayName must be a valid function name.\x1b[0m')
         }
         else {
@@ -97,13 +97,13 @@ const Oloo = {
   base(obj, funcName, ...params) {
     funcName = typeof funcName === 'function' ? funcName.name.replace(/(bound|\s)/g,'') : funcName;
     
-    let parent = obj;
-
     let currentObjectInstance = Oloo.objectMap.get(obj);
     if(currentObjectInstance) {
       // Keeps track of how far down the inheritance tree we are for a give function. Start from scratch if we called a different function.
-      obj = currentObjectInstance[funcName] || obj;
+      obj = Object.getPrototypeOf(currentObjectInstance[funcName]) || obj;
     }
+
+    let parent = obj;
 
     while(!parent.hasOwnProperty(funcName)) {
       // Start with the first base object that has the function. This will also ignore the first base objects func if we are calling the method without base since that will be the function we are calling this from.
@@ -111,23 +111,27 @@ const Oloo = {
 
       if(process.env.NODE_ENV !== 'production') {
         if(!parent) {
-          throw new Error(`No base function ${funcName} was found.`);
+          console.error(`No base function ${funcName} was found.`);
+          return undefined;
         }
       }
     }
 
-    if(!obj.hasOwnProperty("__parent__")) {
-      // We ignore the first prototype since that is still the same object.
+    // We ignore the first function since that is where the base original got called from.
+    if(!currentObjectInstance || (currentObjectInstance && !currentObjectInstance[funcName])) {
       parent = Object.getPrototypeOf(parent);
-    }
 
-    if(!parent.hasOwnProperty("__parent__")) {
-      Object.defineProperty(parent, '__parent__', {
-        writable: false,
-        configurable: false,
-        enumerable: false,
-        value: true
-      })
+      while(!parent.hasOwnProperty(funcName)) {
+        // Get parent that has func to call.
+        parent = Object.getPrototypeOf(parent);
+  
+        if(process.env.NODE_ENV !== 'production') {
+          if(!parent) {
+            console.error(`No base function ${funcName} was found.`);
+            return null;
+          }
+        }
+      }
     }
     
     if(currentObjectInstance) {
@@ -138,46 +142,12 @@ const Oloo = {
       Oloo.objectMap.set(obj, currentObjectInstance);
     }
 
-    if(!parent.hasOwnProperty(funcName)) {
-      return Oloo._base(obj, parent, funcName, ...params);
-    }
-
     const ret = parent[funcName].bind(currentObjectInstance.obj)(...params);
 
     if(currentObjectInstance.obj) {
       Oloo.objectMap.delete(currentObjectInstance.obj);
-    }
-
-    return ret;
-  },
-  
-  _base(objInstance, obj, funcName, ...params) {
-    let parent = Object.getPrototypeOf(obj);
-
-    while(!parent.hasOwnProperty(funcName)) {
-      // Get parent that has func to call.
-      parent = Object.getPrototypeOf(parent);
-    }
-
-    if(!parent.hasOwnProperty("__parent__")) {
-      Object.defineProperty(parent, '__parent__', {
-        writable: false,
-        configurable: false,
-        enumerable: false,
-        value: true
-      })
     }
     
-    let currentObjectInstance = Oloo.objectMap.get(objInstance);
-    // Keeps track of last base class to call function.
-    currentObjectInstance[funcName] = parent;
-
-    const ret = parent[funcName].bind(currentObjectInstance.obj)(...params);
-
-    if(currentObjectInstance.obj) {
-      Oloo.objectMap.delete(currentObjectInstance.obj);
-    }
-
     return ret;
   }
 }

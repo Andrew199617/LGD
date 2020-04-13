@@ -85,9 +85,15 @@ object2Instance.virtualMethod();
 
 # Release Notes
 
-## 2.1.0 
+## 2.2.0+
+
+- Got rid of parent field on objects, we keep track of the parent throughout the life of the method call and then remove it.
+   - In the past we use to inject __parent__ into objects to know if we already called a method on the parent. Now we don't.
+- Improved error handling.
+
+## 2.1.0+
 
 - Improved speed tremendously. Kept older assign as assignSlow for creating classes that don't get created often.
 - Added debugging capabilities. 
    - If you add a displayName to your Obj we will make sure it appears in the Stack Trace.
-   - Make sure displayName is a function name. Also consider compiling out displayName with Babel. 
+   - Check to make sure displayName is a function name. Also consider compiling out displayName with Babel. 
