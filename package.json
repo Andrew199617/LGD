@@ -1,7 +1,7 @@
 {
   "name": "@mavega/oloo",
   "version": "2.1.4",
-  "description": "Polyfill to allow you to use OLOO pattern properly in project. Check out VSC extensions by LearnGameDevelopment to have syntax highlighting for these polyfills.",
+  "description": "Add OLOO pattern properly in project. Makes sure prototype is set properly so inheritance just works. No binding needed.",
   "main": "lgd.js",
   "types": "typings/lgd.d.ts",
   "repository": {
