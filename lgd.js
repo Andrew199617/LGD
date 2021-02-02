@@ -3,13 +3,13 @@ function red(str) {
 }
 
 /**
- * @description Helps with implementing Objects Linked to Other Objects Pattern. No need for this bindings. Also lets you keep your getters and setters as apposed to using Objects.assign. 
+ * @description Helps with implementing Objects Linked to Other Objects Pattern. No need for this bindings. Also lets you keep your getters and setters as apposed to using Objects.assign.
  * @see https://www.learngamedevelopment.net/blog/oloo(objectslinkingtootherobjects)
  * @class OlooConstructor
  */
 const Oloo = {
   /**
-   * @description Helps keep track of what level we are for a function. This way we can always call the function with the intial instance but continually go down the chain of inheritance.
+   * @description Helps keep track of what level we are for a function. This way we can always call the function with the initial instance but continually go down the chain of inheritance.
    */
   objectMap: new Map(),
 
@@ -40,10 +40,10 @@ const Oloo = {
     Object.setPrototypeOf(baseObj, newProto);
     return baseObj;
   },
-  
+
   assignWithSymbols(baseObj, obj) {
     baseObj = Oloo.assign(baseObj, obj);
-    
+
     let descriptors = [];
     // by default, Object.assign copies enumerable Symbols too
     Object.getOwnPropertySymbols(obj)
@@ -55,11 +55,11 @@ const Oloo = {
       });
 
     Object.defineProperties(baseObj, descriptors);
-  
+
     return baseObj;
   },
 
-  assignSlow(baseObj, obj) {  
+  assignSlow(baseObj, obj) {
     const oldProto = Object.getPrototypeOf(baseObj);
     const newProto = Object.create(oldProto);
 
@@ -76,7 +76,7 @@ const Oloo = {
         return descriptors;
       }, {});
     Object.setPrototypeOf(baseObj, newProto);
-      
+
     if(process.env.NODE_ENV !== 'production') {
       if(obj.constructor === Object.prototype.constructor && obj.displayName) {
         var fnNameRegex = /^[A-Z_][0-9A-Z_]*$/i;
@@ -90,15 +90,15 @@ const Oloo = {
     }
 
     Object.defineProperties(baseObj, descriptors);
-    
+
     return baseObj;
   },
 
   base(obj, funcName, ...params) {
     funcName = typeof funcName === 'function' ? funcName.name.replace(/(bound|\s)/g,'') : funcName;
-    
+
     let currentObjectInstance = Oloo.objectMap.get(obj);
-    if(currentObjectInstance) {
+    if(currentObjectInstance && currentObjectInstance[funcName]) {
       // Keeps track of how far down the inheritance tree we are for a give function. Start from scratch if we called a different function.
       obj = Object.getPrototypeOf(currentObjectInstance[funcName]) || obj;
     }
@@ -117,14 +117,14 @@ const Oloo = {
       }
     }
 
-    // We ignore the first function since that is where the base original got called from.
+    // We ignore the first function since that is where the base originally got called from.
     if(!currentObjectInstance || (currentObjectInstance && !currentObjectInstance[funcName])) {
       parent = Object.getPrototypeOf(parent);
 
       while(!parent.hasOwnProperty(funcName)) {
         // Get parent that has func to call.
         parent = Object.getPrototypeOf(parent);
-  
+
         if(process.env.NODE_ENV !== 'production') {
           if(!parent) {
             console.error(`No base function ${funcName} was found.`);
@@ -133,7 +133,7 @@ const Oloo = {
         }
       }
     }
-    
+
     if(currentObjectInstance) {
       currentObjectInstance[funcName] = parent;
     }
@@ -147,7 +147,7 @@ const Oloo = {
     if(currentObjectInstance.obj) {
       Oloo.objectMap.delete(currentObjectInstance.obj);
     }
-    
+
     return ret;
   }
 }

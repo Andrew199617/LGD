@@ -13,9 +13,9 @@ declare module '@learngamedevelopment/oloo' {
 
     Oloo: OlooConstructor;
   }
-  
+
   /**
-   * @description Helps with implementing Objects Linked to Other Objects Pattern. No need for this bindings. Also lets you keep your getters and setters as apposed to using Objects.assign. 
+   * @description Helps with implementing Objects Linked to Other Objects Pattern. No need for this bindings. Also lets you keep your getters and setters as apposed to using Objects.assign.
    * @see https://www.learngamedevelopment.net/blog/oloo(objectslinkingtootherobjects)
    * @class OlooConstructor
    */
@@ -25,39 +25,39 @@ declare module '@learngamedevelopment/oloo' {
      * @param o Object to use as a prototype. May be null.
      */
     create(o: object | null): any;
-  
+
     /**
-     * @description Creates an object that has the specified prototype, 
+     * @description Creates an object that has the specified prototype,
      * and that optionally contains specified properties.
      * @param o Object to use as a prototype. May be null
      * @param properties JavaScript object that contains one or more property descriptors.
      */
     create(o: object | null, properties: PropertyDescriptorMap & ThisType<any>): any;
-  
+
     /**
-     * @description This method allows you to have a smaller memory footprint for a much slower initial load. 
+     * @description This method allows you to have a smaller memory footprint for a much slower initial load.
      * Pair with assignSlow.
-     * 
+     *
      * Typically if you use Object.create you will have prototypes that contain getters down the
      * prototype chain. This will remove those, making it so you only have one Property Descriptor per Accessor.
-     * 
+     *
      * @param {T} obj The object to create instance for.
      */
     createSlow<T>(obj: T): T;
-  
+
     /**
-     * @description As fast as Object.assign and Object.create. 
-     * 
-     * Keeps Getters and setters and inheritance of functions. 
-     * Will also keep inheritance of Getters and Setters. 
+     * @description As fast as Object.assign and Object.create.
+     *
+     * Keeps Getters and setters and inheritance of functions.
+     * Will also keep inheritance of Getters and Setters.
      * Has same memory efficiency as Object.create/assign.
-     * 
+     *
      * Usage:
      * ``` js
      * const BaseObj = { get var() { return 'ignored': } };
      * const Obj = { get var() { return 'hello'; } };
      * const baseObj = Object.create(BaseObj);
-     * const obj = Oloo.assignFast(baseObj, Obj);
+     * const obj = Oloo.assign(baseObj, Obj);
      * // baseObj.var === 'ignored'
      * // obj.var === 'hello'
      * ```
@@ -66,27 +66,27 @@ declare module '@learngamedevelopment/oloo' {
      * @param {M} obj The objects to assign. Obj Inherits from baseObj.
      */
     assign<T, M>(baseObj: T, obj: M): T & M;
-  
+
     /**
-     * @description Same as assign but also carries over Symbols. 
+     * @description Same as assign but also carries over Symbols.
      * @param {T} baseObj The baseObj object we are inheriting from gets modified in place.
      * @param {M} obj The objects to assign. Obj Inherits from baseObj.
      */
     assignWithSymbols<T, M>(baseObj: T, obj: M): T & M;
-  
+
     /**
      * @description Will only keep inheritance of Functions. Getters and Setters will be Overwritten.
-     * 
-     * This method allows you to have a smaller memory footprint for a slower initial load. 
+     *
+     * This method allows you to have a smaller memory footprint for a slower initial load.
      * Do not load more than 100,000 object use regular assign if you need that many.
-     * 
+     *
      * Ideal for classes that don't get created often like Managers, Singletons.
-     * 
+     *
      * @param {T} baseObj The baseObj object we are inheriting from gets modified in place.
      * @param {M} obj The objects to assign. Obj Inherits from baseObj.
      */
     assignSlow<T, M>(baseObj: T, obj: M): T & M;
-  
+
     /**
      * @description Call the base function of an object.
      * @param {{}} obj The object with the function.
@@ -94,7 +94,7 @@ declare module '@learngamedevelopment/oloo' {
      * @param {...any[]} params The paramaters to call the function with.
      */
     base<R, P>(obj: {}, func: (...params: P) => R, ...params: P): R;
-  
+
     /**
      * @description Call the base function of an object.
      * @param {{}} obj The object with the function.
