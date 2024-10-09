@@ -1,4 +1,4 @@
-# LGD
+# OLOO
 Use OLOO pattern. Check out VSC extensions by LearnGameDevelopment to have syntax highlighting.
 
 # Why to use this module.
