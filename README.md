@@ -8,7 +8,7 @@ Use OLOO pattern. Check out VSC extensions by LearnGameDevelopment to have synta
 
 ## Using Oloo.assign
 ``` js
-const { setup } = require('@learngamedevelopment/oloo');
+const { setup } = require('@mavega/oloo');
 setup();
 
 const Object1 = {
@@ -46,13 +46,13 @@ object2Instance.virtualMethod();
 
 ## Using Oloo.assignSlow + Oloo.createSlow
 ``` js
-const { setup } = require('@learngamedevelopment/oloo');
+const { setup } = require('@mavega/oloo');
 setup();
 
 const Object1 = {
   create() {
     // must use createSlow in the first object of the chain.
-    const object1 = Object.createSlow(Object1);
+    const object1 = Oloo.createSlow(Object1);
 
     object1.var = 0;
     object1.var2 = 'hi';
@@ -84,6 +84,10 @@ object2Instance.virtualMethod();
 ```
 
 # Release Notes
+
+## 2.3.0+
+- Added documentation for all the methods.
+- Changed Base call so that you don't have to specify the funcName. Added a back up baseFunc incase you want to deliberately pass name for speed.
 
 ## 2.2.0+
 
