@@ -1,6 +1,6 @@
 {
   "name": "@mavega/oloo",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "Add OLOO pattern properly in project. Makes sure prototype is set properly so inheritance just works. No binding needed.",
   "main": "lgd.js",
   "types": "typings/lgd.d.ts",

@@ -1,5 +1,5 @@
 
-declare module '@learngamedevelopment/oloo' {
+declare module '@mavega/oloo' {
 
   /**
   * @description Public facing class.
