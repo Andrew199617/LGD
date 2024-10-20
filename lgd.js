@@ -112,21 +112,6 @@ const Oloo = {
 
   /**
    * @description Calls the base method (parent method in prototype chain) for the given object.
-   * Automatically detects the calling function's name, eliminating the need to pass it.
-   * 
-   * @param {Object} obj - The object instance to call the base method on.
-   * @param {...any} params - Parameters to pass to the base method.
-   * @returns {any} The result of the base method.
-   */
-  baseFunc(obj, ...params) {
-    const funcName = Oloo._getCallingFunctionName();
-    if (!funcName) {
-      throw new Error("Unable to determine calling function name.");
-    }
-  },
-
-  /**
-   * @description Calls the base method (parent method in prototype chain) for the given object.
    * pass function by ref or name.
    * 
    * @param {Object} obj - The object instance to call the base method on.
@@ -185,22 +170,6 @@ const Oloo = {
     }
 
     return parent;
-  },
-
-  /**
-   * @description Infers the calling function's name by parsing the stack trace.
-   * This is used to avoid passing the function name manually to the `base` method.
-   * 
-   * @returns {string|null} The name of the calling function, or null if it cannot be determined.
-   */
-  _getCallingFunctionName() {
-    // Capture the current call stack (modern browsers support this)
-    const error = new Error();
-    const stack = error.stack;
-
-    // Assuming stack trace in form "at functionName (file.js:line:column)"
-    const match = stack?.split("\n")[3]?.match(/at .*?\.(\w+) /);
-    return match ? match[1] : null;
   }
 }
 

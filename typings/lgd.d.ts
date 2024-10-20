@@ -90,16 +90,8 @@ declare module '@mavega/oloo' {
     /**
      * @description Call the base function of an object.
      * @param {{}} obj The object with the function.
-     * @param {function(): R} func The function to call. Pass in using ObjectName.function or this.function.
-     * @param {...any[]} params The paramaters to call the function with.
-     */
-    base<R, P>(obj: {}, func: (...params: P) => R, ...params: P): R;
-
-    /**
-     * @description Call the base function of an object.
-     * @param {{}} obj The object with the function.
-     * @param {string} funcName String name of the function to call. 'functionName'.
-     * @param {...any[]} params The paramaters to call the function with.
+     * @param {string | Function} funcName String name of the function to call. 'functionName' or obj.functionName and we will get name from function.
+     * @param {...any[]} params The parameters to call the function with.
      */
     base(obj: {}, funcName: string, ...params: any[]);
   }
